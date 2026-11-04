@@ -1,0 +1,66 @@
+# Environment & API keys
+.env
+.env.*
+*.env
+*.env.local
+!*.env.example
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Storage, Generated Uploads & Vector Indexes
+backend/storage/uploads/*
+!backend/storage/uploads/.gitkeep
+backend/storage/chroma_db/*
+!backend/storage/chroma_db/.gitkeep
+backend/storage/faiss_index/*
+!backend/storage/faiss_index/.gitkeep
+backend/storage/*.db
+backend/storage/*.db-wal
+backend/storage/*.db-shm
+storage/uploads/*
+storage/chroma_db/*
+storage/faiss_index/*
+storage/*.db*
+
+# Frontend & Build Artifacts
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+.vercel/
+*.local
+
+# OS Files & Temporary Files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

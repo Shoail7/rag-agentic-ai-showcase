@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: rag-agentic-backend
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DEFAULT_PROVIDER
+        value: gemini
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: STORAGE_TYPE
+        value: local
