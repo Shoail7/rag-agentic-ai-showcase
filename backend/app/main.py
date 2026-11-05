@@ -22,7 +22,8 @@ from backend.app.routers import (
     agent,
     agentic_rag,
     chunk_lab,
-    settings_router
+    settings_router,
+    rates_router
 )
 
 @asynccontextmanager
@@ -66,6 +67,7 @@ app.include_router(agent.router)
 app.include_router(agentic_rag.router)
 app.include_router(chunk_lab.router)
 app.include_router(settings_router.router)
+app.include_router(rates_router.router)
 
 @app.get("/")
 def root():

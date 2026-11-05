@@ -9,7 +9,8 @@ from backend.app.services.agent_service import (
     DateCalculator,
     MockTravelSearch,
     TextAnalysisTool,
-    SimpleDataAnalysisTool
+    SimpleDataAnalysisTool,
+    OpenMeteoWeatherTool
 )
 
 router = APIRouter(prefix="/api/agent", tags=["AI Agent Studio"])
@@ -34,6 +35,12 @@ class TravelSearchRequest(BaseModel):
 class DataAnalysisRequest(BaseModel):
     csv_content: str
     column_name: Optional[str] = None
+
+class WeatherRequest(BaseModel):
+    location: str
+
+class TextAnalysisRequest(BaseModel):
+    text: str
 
 @router.get("/tools")
 def list_agent_tools():
@@ -67,6 +74,12 @@ def list_agent_tools():
             "name": "CSV Dataset Analyzer",
             "description": "Performs fast aggregations, min/max ranges, averages, and column stats on tabular CSV records.",
             "capabilities": ["Column totals", "Averages", "Min / Max bounds", "Row count and schema detection"]
+        },
+        {
+            "id": "open_meteo_weather",
+            "name": "Open-Meteo Weather Tool",
+            "description": "Fetches real-time temperature, humidity, wind speed, precipitation, and sky conditions using the free Open-Meteo API (no API key required).",
+            "capabilities": ["Live global forecast", "Temperature & Feels Like", "Humidity & Wind speed", "WMO Weather classification"]
         }
     ]
 
@@ -139,4 +152,13 @@ def direct_travel_search(req: TravelSearchRequest):
 @router.post("/tools/data-analysis")
 def direct_data_analysis(req: DataAnalysisRequest):
     return SimpleDataAnalysisTool.analyze_csv(req.csv_content, req.column_name)
+
+@router.post("/tools/weather")
+async def direct_weather(req: WeatherRequest):
+    return await OpenMeteoWeatherTool.get_weather(req.location)
+
+@router.post("/tools/text-analysis")
+def direct_text_analysis(req: TextAnalysisRequest):
+    return TextAnalysisTool.analyze(req.text)
+
 

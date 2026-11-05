@@ -105,3 +105,36 @@ def test_agentic_rag_decomposition():
     assert any("2024" in sq["text"] for sq in sub_q)
     assert any("2025" in sq["text"] for sq in sub_q)
 
+def test_currency_rates_service():
+    import asyncio
+    from backend.app.routers.rates_router import fetch_live_rates, convert_currency, get_popular_pairs
+    
+    # Test latest rates
+    rates_data = asyncio.run(fetch_live_rates("USD"))
+    assert rates_data["base"] == "USD"
+    assert "EUR" in rates_data["rates"]
+    assert "INR" in rates_data["rates"]
+
+    # Test conversion
+    conv = asyncio.run(convert_currency(amount=100.0, from_currency="USD", to_currency="INR"))
+    assert conv["status"] == "success"
+    assert conv["amount"] == 100.0
+    assert conv["converted_amount"] > 1000  # 100 USD > 1000 INR
+    assert conv["rate"] > 0
+
+    # Test popular pairs
+    popular = asyncio.run(get_popular_pairs())
+    assert len(popular["pairs"]) >= 6
+
+
+def test_open_meteo_weather_tool():
+    import asyncio
+    from backend.app.services.agent_service import OpenMeteoWeatherTool
+
+    res = asyncio.run(OpenMeteoWeatherTool.get_weather("Tokyo"))
+    assert res["status"] == "success"
+    assert "Tokyo" in res["location"]
+    assert "temperature" in res
+    assert "condition" in res
+
+

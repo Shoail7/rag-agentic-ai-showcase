@@ -98,7 +98,7 @@ export const SettingsPage: React.FC = () => {
         subtitle="Manage LLM providers, model identifiers, API keys, and local embeddings"
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6 max-w-5xl">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 max-w-5xl">
         {/* Rate Limits Quota Banner */}
         <div className="liquid-glass p-5 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-white/80 dark:border-white/10">
           <div className="flex items-center gap-3">
@@ -107,18 +107,18 @@ export const SettingsPage: React.FC = () => {
             </div>
             <div>
               <h4 className="text-sm font-display font-semibold text-slate-900 dark:text-white">
-                Model Rate Limits, TPM & Reset Schedules
+                Currency Rates & Model Quota Telemetry
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Monitor free-tier quotas, rolling 60-second windows, and daily UTC/PT reset countdowns.
+                Real-time currency exchange rates, free-tier TPM/RPM limits, and daily UTC/PT reset countdowns.
               </p>
             </div>
           </div>
           <Link
-            to="/limit-check"
+            to="/rate-checker"
             className="btn-liquid-pill px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-white dark:text-slate-950 flex items-center gap-1.5 shrink-0"
           >
-            <span>Open Limit Check</span>
+            <span>Open Rate Checker</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -349,8 +349,8 @@ export const SettingsPage: React.FC = () => {
 
             <div className="p-4 rounded-2xl liquid-glass-subtle space-y-1">
               <span className="font-display font-bold text-slate-700 dark:text-slate-300 block">Vector Storage</span>
-              <span className="font-mono text-emerald-600 dark:text-emerald-400 text-[11px] block font-semibold">ChromaDB Persistent</span>
-              <span className="text-[10px] text-slate-400">Local Directory (Separate from PDFs)</span>
+              <span className="font-mono text-emerald-600 dark:text-emerald-400 text-[11px] block font-semibold">FAISS Vector Store (Persistent)</span>
+              <span className="text-[10px] text-slate-400">Local Disk Storage (Separate from PDFs)</span>
             </div>
 
             <div className="p-4 rounded-2xl liquid-glass-subtle space-y-1">

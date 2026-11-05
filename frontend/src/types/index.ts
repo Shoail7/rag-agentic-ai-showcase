@@ -229,7 +229,7 @@ export interface AppSettings {
   storage: {
     type: string;
     local_uploads_dir: string;
-    chroma_dir: string;
+    vector_dir?: string;
   };
 }
 
@@ -276,5 +276,57 @@ export interface ModelLimitsResponse {
   };
   models: ModelLimitItem[];
 }
+
+export interface ExchangeRateResponse {
+  result: string;
+  provider: string;
+  documentation: string;
+  terms_of_use: string;
+  time_last_update_unix: number;
+  time_last_update_utc: string;
+  time_next_update_unix: number;
+  time_next_update_utc: string;
+  base_code: string;
+  rates: { [currency: string]: number };
+  cached: boolean;
+  status: string;
+}
+
+export interface CurrencyConversionResult {
+  base: string;
+  target: string;
+  amount: number;
+  rate: number;
+  converted_amount: number;
+  timestamp: string;
+  data_source: string;
+  cached: boolean;
+  status: string;
+}
+
+export interface PopularPairItem {
+  pair: string;
+  base: string;
+  target: string;
+  rate: number;
+  timestamp: string;
+  source: string;
+}
+
+export interface WeatherToolResult {
+  location: string;
+  latitude?: number;
+  longitude?: number;
+  temperature: string;
+  feels_like: string;
+  humidity: string;
+  wind_speed: string;
+  precipitation?: string;
+  condition: string;
+  weather_code?: number;
+  data_source: string;
+  status: string;
+}
+
 
 

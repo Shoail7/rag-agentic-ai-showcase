@@ -97,7 +97,7 @@ export const AgenticRagStudio: React.FC = () => {
         subtitle="Autonomous retrieval orchestration with question decomposition, multi-source synthesis, and self-correction"
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
         <LearnHowItWorks moduleName="Agentic RAG & Iterative Retrieval" items={learnItems} />
 
         {/* Input & Target Documents Panel */}

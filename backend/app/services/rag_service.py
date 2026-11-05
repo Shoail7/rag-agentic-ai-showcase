@@ -211,7 +211,7 @@ class RAGService:
                 "query_token_count": embedding_service.count_tokens(question)
             },
             "vector_db": {
-                "engine": "ChromaDB Persistent Client",
+                "engine": "FAISS (IndexFlatIP) Persistent Store",
                 "collections_queried": collection_names,
                 "top_k": top_k,
                 "similarity_threshold": similarity_threshold

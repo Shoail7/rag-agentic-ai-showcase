@@ -27,7 +27,7 @@ export const LearningCentre: React.FC = () => {
         subtitle="Theoretical foundations, system architectures, and comparative engineering principles"
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
         {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2.5 border-b border-black/5 dark:border-white/5 pb-3">
           {topics.map((t) => {
@@ -80,7 +80,7 @@ export const LearningCentre: React.FC = () => {
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                   <span className="px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-200">Vector Embeddings</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-200">ChromaDB</span>
+                  <span className="px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-200">FAISS Index</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                   <span className="px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-slate-800 dark:text-slate-200">Cosine Retrieval</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />

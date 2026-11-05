@@ -11,7 +11,8 @@ import {
   Compass,
   FileSpreadsheet,
   AlignLeft,
-  Sparkles
+  Sparkles,
+  CloudSun
 } from 'lucide-react';
 import { Header } from '../components/Header';
 import { LearnHowItWorks } from '../components/LearnHowItWorks';
@@ -31,6 +32,13 @@ export const AiAgentStudio: React.FC = () => {
   const [dateResult, setDateResult] = useState<any>(null);
   const [travelDest, setTravelDest] = useState('Goa');
   const [travelResult, setTravelResult] = useState<any>(null);
+  const [weatherLoc, setWeatherLoc] = useState('Tokyo');
+  const [weatherResult, setWeatherResult] = useState<any>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [csvContent, setCsvContent] = useState('Item,Cost\nHotel,4200\nFlight,6500\nMeals,1800');
+  const [csvResult, setCsvResult] = useState<any>(null);
+  const [textInput, setTextInput] = useState('Antigravity RAG agents use reasoning loops to plan, select tools, and verify observations.');
+  const [textResult, setTextResult] = useState<any>(null);
 
   const handleRunAgent = async () => {
     if (!goal.trim()) return;
@@ -55,6 +63,7 @@ export const AiAgentStudio: React.FC = () => {
 
   const presetGoals = [
     "Plan a two-day Goa trip under ₹10,000.",
+    "What is the current weather forecast in Tokyo right now?",
     "Calculate 18% GST on a laptop purchase of ₹65,000 + ₹2,400 shipping",
     "Calculate the project deadline 45 calendar days from today",
     "Analyze departmental expense dataset and calculate average spend",
@@ -86,7 +95,7 @@ export const AiAgentStudio: React.FC = () => {
         subtitle="Multi-step autonomous agent reasoning, tool execution, and observable timeline"
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
         <LearnHowItWorks moduleName="Autonomous AI Agents & Tool Calling" items={learnItems} />
 
         {/* Goal Input & Controls Bar */}
@@ -280,7 +289,7 @@ export const AiAgentStudio: React.FC = () => {
 
         {/* VIEW 2: INDIVIDUAL TOOL TESTING SANDBOX */}
         {activeTab === 'sandbox' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Tool 1: Calculator */}
             <div className="liquid-glass rounded-3xl p-6 space-y-3.5">
               <div className="flex items-center gap-2">
@@ -372,6 +381,131 @@ export const AiAgentStudio: React.FC = () => {
                 <pre className="p-3 rounded-2xl liquid-glass-subtle font-mono text-[10px] text-emerald-600 dark:text-emerald-400 max-h-48 overflow-y-auto">
                   {JSON.stringify(travelResult.estimated_totals, null, 2)}
                 </pre>
+              )}
+            </div>
+
+            {/* Tool 4: Open-Meteo Weather Tool */}
+            <div className="liquid-glass rounded-3xl p-6 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CloudSun className="w-4 h-4 text-amber-500" />
+                  <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                    4. Open-Meteo Live Weather
+                  </h4>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20">
+                  Free API
+                </span>
+              </div>
+              <input
+                type="text"
+                value={weatherLoc}
+                onChange={(e) => setWeatherLoc(e.target.value)}
+                placeholder="City name (e.g., Tokyo, London, Paris, New York)"
+                className="w-full p-3 rounded-2xl liquid-glass-subtle text-xs font-mono text-slate-900 dark:text-white"
+              />
+              <button
+                onClick={async () => {
+                  try {
+                    setWeatherLoading(true);
+                    const r = await api.testWeather(weatherLoc);
+                    setWeatherResult(r);
+                  } catch (e: any) {
+                    setWeatherResult({ error: e.message });
+                  } finally {
+                    setWeatherLoading(false);
+                  }
+                }}
+                disabled={weatherLoading}
+                className="w-full py-2.5 btn-liquid-pill text-xs font-semibold cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <CloudSun className="w-3.5 h-3.5" />
+                <span>{weatherLoading ? 'Fetching Live Forecast...' : 'Get Live Weather'}</span>
+              </button>
+              {weatherResult && (
+                <div className="p-3.5 rounded-2xl liquid-glass-subtle space-y-1 text-xs">
+                  <div className="flex justify-between font-bold text-slate-900 dark:text-white">
+                    <span>{weatherResult.location || weatherLoc}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">{weatherResult.temperature}</span>
+                  </div>
+                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                    Condition: <strong className="text-slate-900 dark:text-white">{weatherResult.condition}</strong> (Feels {weatherResult.feels_like})
+                  </div>
+                  <div className="text-[11px] text-slate-500 flex justify-between">
+                    <span>Humidity: {weatherResult.humidity}</span>
+                    <span>Wind: {weatherResult.wind_speed}</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-1 pt-1 border-t border-border/40">
+                    Source: {weatherResult.data_source}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Tool 5: CSV Dataset Analyzer */}
+            <div className="liquid-glass rounded-3xl p-6 space-y-3.5">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                  5. CSV Dataset Analyzer
+                </h4>
+              </div>
+              <textarea
+                rows={3}
+                value={csvContent}
+                onChange={(e) => setCsvContent(e.target.value)}
+                placeholder="CSV content with headers"
+                className="w-full p-3 rounded-2xl liquid-glass-subtle text-xs font-mono text-slate-900 dark:text-white resize-none"
+              />
+              <button
+                onClick={async () => {
+                  const r = await api.testDataAnalysis({ csv_content: csvContent });
+                  setCsvResult(r);
+                }}
+                className="w-full py-2.5 btn-liquid-pill text-xs font-semibold cursor-pointer"
+              >
+                Analyze CSV Data
+              </button>
+              {csvResult && (
+                <pre className="p-3 rounded-2xl liquid-glass-subtle font-mono text-[10px] text-emerald-600 dark:text-emerald-400 max-h-40 overflow-y-auto">
+                  {JSON.stringify(csvResult.statistics || csvResult, null, 2)}
+                </pre>
+              )}
+            </div>
+
+            {/* Tool 6: Text Analysis Tool */}
+            <div className="liquid-glass rounded-3xl p-6 space-y-3.5">
+              <div className="flex items-center gap-2">
+                <AlignLeft className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                  6. Text & Key Phrase Extractor
+                </h4>
+              </div>
+              <textarea
+                rows={3}
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="Paste paragraph or policy snippet"
+                className="w-full p-3 rounded-2xl liquid-glass-subtle text-xs font-mono text-slate-900 dark:text-white resize-none"
+              />
+              <button
+                onClick={async () => {
+                  const r = await api.testTextAnalysis(textInput);
+                  setTextResult(r);
+                }}
+                className="w-full py-2.5 btn-liquid-pill text-xs font-semibold cursor-pointer"
+              >
+                Extract Phrases & Stats
+              </button>
+              {textResult && (
+                <div className="p-3 rounded-2xl liquid-glass-subtle text-xs space-y-1">
+                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                    Words: <strong className="text-slate-900 dark:text-white">{textResult.word_count}</strong> | Sentences: <strong className="text-slate-900 dark:text-white">{textResult.sentence_count}</strong>
+                  </div>
+                  <div className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">
+                    Key Phrases: {textResult.key_phrases?.join(', ')}
+                  </div>
+                </div>
               )}
             </div>
           </div>

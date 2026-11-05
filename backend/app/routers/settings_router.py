@@ -293,7 +293,7 @@ def get_rate_limits():
                     "daily_reset": "None",
                     "seconds_to_daily_reset": 0
                 },
-                "recommended_for": "Document token-aware vector embeddings & ChromaDB indexing",
+                "recommended_for": "Document token-aware vector embeddings & FAISS vector indexing",
                 "rate_limit_mitigation": "Strict architectural ceiling of 512 tokens per chunk to prevent truncation."
             }
         ]

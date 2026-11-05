@@ -87,7 +87,7 @@ export const Dashboard: React.FC = () => {
         onSampleLoaded={fetchDocs}
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8">
         {/* Liquid Hero Section (matching the user's reference layout) */}
         <div className="relative py-8 px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -166,7 +166,7 @@ export const Dashboard: React.FC = () => {
                 </div>
               </div>
               <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                ChromaDB Collections
+                FAISS Vector Indexes
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Persistent local vector indexes

@@ -125,7 +125,7 @@ export const RagExplorer: React.FC = () => {
     },
     {
       title: "3. What is a Vector Database & Semantic Search?",
-      summary: "ChromaDB stores embedding vectors and performs approximate nearest-neighbor (HNSW) search using Cosine distance.",
+      summary: "FAISS (IndexFlatIP) stores embedding vectors and performs exact Inner Product (Cosine) similarity retrieval with sub-millisecond latency.",
       details: "Instead of searching for exact string matches like CTRL+F, cosine similarity measures the angle between the query vector and chunk vectors. Chunks with higher cosine similarity scores (closer to 1.0) represent the most relevant context."
     },
     {
@@ -147,7 +147,7 @@ export const RagExplorer: React.FC = () => {
         subtitle="Step-by-step conventional Retrieval-Augmented Generation pipeline inspection"
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
         {/* Educational banner */}
         <LearnHowItWorks moduleName="Conventional RAG Pipeline" items={learnItems} />
 
@@ -527,8 +527,17 @@ export const RagExplorer: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-8 text-center text-xs text-slate-400">
-                      Run the pipeline to inspect augmented prompt context.
+                    <div className="p-6 rounded-2xl liquid-glass-subtle text-xs text-slate-600 dark:text-slate-300 space-y-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-indigo-500" />
+                        <span>Prompt Augmentation & Context Framing</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        Retrieved chunk text is formatted into structured XML context blocks (e.g. <code>&lt;context_chunk document="..." page="..."&gt;</code>) and injected into the system prompt. Grounding instructions instruct the LLM to strictly cite facts from the context and avoid fabricating unverified claims.
+                      </p>
+                      <p className="text-[11px] text-slate-500 italic">
+                        Run the pipeline using the left panel to inspect the compiled augmented prompt sent to the LLM.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -539,7 +548,7 @@ export const RagExplorer: React.FC = () => {
                 <div className="space-y-4">
                   <div className="border-b border-black/5 dark:border-white/5 pb-3">
                     <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                      ChromaDB Retrieval Matches
+                      FAISS Retrieval Matches
                     </h4>
                   </div>
                   {result ? (
@@ -557,20 +566,103 @@ export const RagExplorer: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-8 text-center text-xs text-slate-400">Run the pipeline to inspect retrieval results.</div>
+                    <div className="p-6 rounded-2xl liquid-glass-subtle text-xs text-slate-600 dark:text-slate-300 space-y-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Search className="w-4 h-4 text-indigo-500" />
+                        <span>Vector Similarity Search (Top-K Chunks)</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        During retrieval, FAISS calculates the inner product between the 384-dimensional question embedding vector and all indexed document chunk vectors. The top {topK} highest-scoring chunks exceeding the similarity threshold ({similarityThreshold}) are extracted and returned here with individual similarity scores.
+                      </p>
+                      <p className="text-[11px] text-slate-500 italic">
+                        Run the pipeline using the left panel to execute retrieval and view ranked chunk matches.
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
 
-              {/* Other stages fallback */}
-              {['pdf_input', 'extraction', 'vector_db'].includes(activeStage) && (
+              {/* STAGE: PDF INPUT */}
+              {activeStage === 'pdf_input' && (
                 <div className="space-y-4">
-                  <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                    Stage Details: {activeStage.replace('_', ' ').toUpperCase()}
-                  </h4>
-                  <pre className="p-4 rounded-2xl liquid-glass-subtle font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
-                    {result ? JSON.stringify(result.pipeline[activeStage as keyof typeof result.pipeline], null, 2) : 'Run pipeline to populate.'}
-                  </pre>
+                  <div className="border-b border-black/5 dark:border-white/5 pb-3">
+                    <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                      Stage Details: PDF Ingestion & Document Selection
+                    </h4>
+                  </div>
+                  {result ? (
+                    <pre className="p-4 rounded-2xl liquid-glass-subtle font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+                      {JSON.stringify(result.pipeline.pdf_input, null, 2)}
+                    </pre>
+                  ) : (
+                    <div className="p-6 rounded-2xl liquid-glass-subtle text-xs text-slate-600 dark:text-slate-300 space-y-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-indigo-500" />
+                        <span>PDF Input Ingestion Stage</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        Raw PDF binary files (such as the Nexora Employee Handbooks) are uploaded into local storage. File metadata including byte size, checksum hash, and total page count are indexed into SQLite for provenance and audit trails.
+                      </p>
+                      <div className="text-[11px] text-slate-500">
+                        Active selection: {selectedDocIds.length > 0 ? `${selectedDocIds.length} document(s) targeted` : 'All documents in library'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STAGE: EXTRACTION */}
+              {activeStage === 'extraction' && (
+                <div className="space-y-4">
+                  <div className="border-b border-black/5 dark:border-white/5 pb-3">
+                    <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                      Stage Details: Text Extraction & Normalization
+                    </h4>
+                  </div>
+                  {result ? (
+                    <pre className="p-4 rounded-2xl liquid-glass-subtle font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+                      {JSON.stringify(result.pipeline.extraction, null, 2)}
+                    </pre>
+                  ) : (
+                    <div className="p-6 rounded-2xl liquid-glass-subtle text-xs text-slate-600 dark:text-slate-300 space-y-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-indigo-500" />
+                        <span>Text Extraction & Document Normalization</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        PyMuPDF / pypdf reads the PDF stream page-by-page, extracting raw textual strings, stripping control characters, and preserving page number tags. This clean UTF-8 text serves as input to the tokenizer-aware chunking pipeline.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STAGE: VECTOR DB */}
+              {activeStage === 'vector_db' && (
+                <div className="space-y-4">
+                  <div className="border-b border-black/5 dark:border-white/5 pb-3">
+                    <h4 className="text-xs font-display font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                      Stage Details: FAISS Vector Database Engine
+                    </h4>
+                  </div>
+                  {result ? (
+                    <pre className="p-4 rounded-2xl liquid-glass-subtle font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+                      {JSON.stringify(result.pipeline.vector_db, null, 2)}
+                    </pre>
+                  ) : (
+                    <div className="p-6 rounded-2xl liquid-glass-subtle text-xs text-slate-600 dark:text-slate-300 space-y-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <Database className="w-4 h-4 text-emerald-500" />
+                        <span>FAISS Vector Database (IndexFlatIP)</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        FAISS (Facebook AI Similarity Search) maintains persistent local binary vector indexes on disk. Vectors are L2-normalized so that inner product calculations directly yield exact cosine similarity with zero approximation loss and sub-millisecond execution.
+                      </p>
+                      <div className="text-[11px] text-slate-500">
+                        Embedding Dimension: 384 • Metric: Inner Product (Cosine) • Persistence: Local FAISS Index Files
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

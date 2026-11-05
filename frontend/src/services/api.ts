@@ -5,7 +5,11 @@ import {
   AgenticRAGResponse,
   ChunkLabResponse,
   AppSettings,
-  ModelLimitsResponse
+  ModelLimitsResponse,
+  ExchangeRateResponse,
+  CurrencyConversionResult,
+  PopularPairItem,
+  WeatherToolResult
 } from '../types';
 
 // Determine API base URL dynamically:
@@ -154,6 +158,24 @@ export const api = {
     return res.json();
   },
 
+  async testWeather(location: string): Promise<WeatherToolResult> {
+    const res = await fetch(`${API_BASE}/agent/tools/weather`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location }),
+    });
+    return res.json();
+  },
+
+  async testTextAnalysis(text: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/agent/tools/text-analysis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    return res.json();
+  },
+
   // Agentic RAG Studio
   async queryAgenticRAG(params: {
     question: string;
@@ -243,6 +265,27 @@ export const api = {
   async getHealth(): Promise<any> {
     const res = await fetch(`${API_BASE}/settings/health`);
     if (!res.ok) throw new Error('Health check failed');
+    return res.json();
+  },
+
+  // Currency Exchange Rates & Live Conversion
+  async getExchangeRates(base: string = 'USD'): Promise<ExchangeRateResponse> {
+    const res = await fetch(`${API_BASE}/rates/latest?base=${encodeURIComponent(base)}`);
+    if (!res.ok) throw new Error('Failed to fetch exchange rates');
+    return res.json();
+  },
+
+  async convertCurrency(base: string, target: string, amount: number): Promise<CurrencyConversionResult> {
+    const res = await fetch(
+      `${API_BASE}/rates/convert?base=${encodeURIComponent(base)}&target=${encodeURIComponent(target)}&amount=${encodeURIComponent(amount)}`
+    );
+    if (!res.ok) throw new Error('Failed to convert currency');
+    return res.json();
+  },
+
+  async getPopularPairs(): Promise<{ base: string; pairs: PopularPairItem[]; timestamp: string }> {
+    const res = await fetch(`${API_BASE}/rates/popular`);
+    if (!res.ok) throw new Error('Failed to fetch popular pairs');
     return res.json();
   }
 };

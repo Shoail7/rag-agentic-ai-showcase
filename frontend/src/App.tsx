@@ -10,7 +10,7 @@ import { AgenticRagStudio } from './pages/AgenticRagStudio';
 import { ChunkSizeLab } from './pages/ChunkSizeLab';
 import { LearningCentre } from './pages/LearningCentre';
 import { SettingsPage } from './pages/SettingsPage';
-import { LimitCheck } from './pages/LimitCheck';
+import { RateChecker } from './pages/RateChecker';
 
 export default function App() {
   return (
@@ -36,7 +36,8 @@ export default function App() {
                 <Route path="/agentic-rag-studio" element={<AgenticRagStudio />} />
                 <Route path="/chunk-lab" element={<ChunkSizeLab />} />
                 <Route path="/learning-centre" element={<LearningCentre />} />
-                <Route path="/limit-check" element={<LimitCheck />} />
+                <Route path="/rate-checker" element={<RateChecker />} />
+                <Route path="/limit-check" element={<RateChecker />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

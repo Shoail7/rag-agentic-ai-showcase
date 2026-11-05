@@ -18,3 +18,4 @@ services:
         value: llama-3.3-70b-versatile
       - key: STORAGE_TYPE
         value: local
+

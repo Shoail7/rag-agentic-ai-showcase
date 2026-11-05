@@ -72,7 +72,7 @@ export const PdfLibrary: React.FC = () => {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Delete "${name}"? This will also remove all associated ChromaDB vector indexes.`)) {
+    if (!window.confirm(`Delete "${name}"? This will also remove all associated FAISS vector indexes.`)) {
       return;
     }
     try {
@@ -119,7 +119,7 @@ export const PdfLibrary: React.FC = () => {
         similarity_threshold: 0.0
       });
       await loadDocs();
-      alert("Document re-indexed with ChromaDB successfully!");
+      alert("Document re-indexed with FAISS successfully!");
     } catch (e: any) {
       alert("Reprocess error: " + e.message);
     } finally {
@@ -135,7 +135,7 @@ export const PdfLibrary: React.FC = () => {
         onSampleLoaded={loadDocs}
       />
 
-      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
         {/* Error Alert */}
         {errorMessage && (
           <div className="p-4 rounded-2xl liquid-glass border-rose-300 text-rose-800 dark:text-rose-300 text-xs flex items-center justify-between shadow-xs">
@@ -189,7 +189,7 @@ export const PdfLibrary: React.FC = () => {
               PyMuPDF Extraction
             </span>
             <span className="text-[11px] px-3.5 py-1 rounded-full bg-black/5 dark:bg-white/5 text-slate-700 dark:text-slate-300 font-medium">
-              ChromaDB Local Vector Index
+              FAISS Local Vector Index
             </span>
           </div>
         </div>
