@@ -1,35 +1,115 @@
-# RAG & Agentic AI Showcase (AI Learning Lab)
+# AI Learning Lab — RAG, AI Agents, Agentic RAG & Rate Checker
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-rag--agentic--ai--showcase-181717?style=flat&logo=github)](https://github.com/Shoail7/rag-agentic-ai-showcase)
-[![Python FastAPI](https://img.shields.io/badge/Backend-FastAPI%203.11+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Python FastAPI](https://img.shields.io/badge/Backend-FastAPI%203.10+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![React Vite](https://img.shields.io/badge/Frontend-React%2019%20%2B%20Vite-61DAFB?style=flat&logo=react)](https://react.dev)
-[![Vector Search](https://img.shields.io/badge/Vector%20DB-FAISS%20%2B%20ChromaDB-blue?style=flat)](https://github.com/facebookresearch/faiss)
+[![Vector Search](https://img.shields.io/badge/Vector%20DB-FAISS%20IndexFlatIP-blue?style=flat)](https://github.com/facebookresearch/faiss)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An educational, interactive web application designed to demonstrate and teach the architectural and operational differences between:
+An educational, interactive web application running locally on your machine that demonstrates the practical differences between:
 
-1. **Conventional RAG (Retrieval-Augmented Generation)**: Single-pass semantic retrieval with token-bounded prompt augmentation.
-2. **Deterministic AI Agents**: Autonomous multi-step **ReAct** (`THINK → ACT → OBSERVE → FINAL ANSWER`) reasoning loops with external deterministic tools.
-3. **Agentic RAG**: Complex question decomposition, query rewriting, multi-document synthesis, and retrieval verification with bounded retries.
-4. **FAISS & ChromaDB Vector Search**: Real-time vector indexing, cosine similarity scoring, and persistent index management.
-5. **Rate Limits & Quota Telemetry (Limit Check)**: Real-time RPM, TPM, and daily reset countdowns (Rolling 60s, UTC Midnight, PT Midnight) with an interactive prompt budget calculator.
+1. **Conventional RAG (Retrieval-Augmented Generation)**: Single-pass semantic search using local **FAISS** vector indexes with token-bounded prompt augmentation.
+2. **Autonomous AI Agents**: Multi-step **ReAct** (`THINK → ACT → OBSERVE → FINAL ANSWER`) reasoning loops with deterministic local & free REST tools (including live weather via Open-Meteo).
+3. **Agentic RAG**: Complex question decomposition, parallel retrieval across multiple editions, evidence evaluation, and multi-source synthesis.
+4. **Rate Checker & Quota Telemetry**: Live multi-currency exchange rates powered by Open Exchange Rates API alongside LLM model quota telemetry (TPM, RPM, RPD, and countdown clocks).
+5. **Local FAISS Vector Engine**: Persistent 384-dimensional dense embeddings (`BAAI/bge-small-en-v1.5`) with exact inner-product (cosine) retrieval running 100% on local CPU.
 
 ---
 
-## 🌟 Application Features
+## ⚡ Quick Start (Double-Click Local Windows Execution)
 
-- **Shared PDF Document Library**: Drag-and-drop multiple PDF uploads, SHA-256 deduplication, PyMuPDF page-level extraction, visual page rasterization preview, and automatic vector index cleanup upon deletion.
-- **Preloaded Fictional Demonstration Handbooks**: Includes `Nexora_Employee_Handbook_2024.pdf` and `Nexora_Employee_Handbook_2025.pdf` for instant 1-click loading and comparative testing.
-- **RAG Explorer Pipeline**: Interactive 8-stage visual pipeline (`PDF → Extraction → Chunking → Embeddings → Vector Index → Retrieval → Prompt Context → Grounded Answer`) with exact page citations and source snippets.
-- **AI Agent Studio**: Multi-step tool-use agent equipped with 5 deterministic tools:
-  - **Calculator**: Safe AST-based mathematical calculation.
-  - **Date Calculator**: Working days calculation, deadline estimation, and date delta.
-  - **Mock Travel Search**: Simulated transport, accommodation, and food pricing for budget queries.
-  - **Text Analyzer**: Word counting, summarization, and key phrase extraction.
-  - **CSV Data Analyzer**: Tabular data parsing with statistical averages, totals, and min/max detection.
-- **Agentic RAG Studio**: Decomposes complex cross-handbook questions into targeted sub-queries, executes parallel vector searches, evaluates evidence sufficiency, and constructs structured comparison tables.
-- **Limit Check & Quota Monitor**: Live telemetry across Gemini (15 RPM / 1M TPM), Groq (30 RPM / 14k-30k TPM), and Ollama (unlimited local compute) with live countdown clocks and a token budget estimator.
-- **Liquid Aurora Glassmorphism UI**: SaaS-grade glass design system supporting seamless light and dark mode toggling.
+You can launch and run the entire application using a single command or double-clicking one file.
+
+### First-Time Prerequisites
+1. **Python 3.10+**: Ensure Python is installed and added to your system `PATH`.
+2. **Node.js (v18+) & npm**: Ensure Node.js LTS is installed.
+
+### Normal Launch (Double-Click)
+1. In the project root directory, double-click:
+   ```cmd
+   start.bat
+   ```
+2. The script will automatically:
+   - Detect project root and verify Python, Node.js, and npm.
+   - Automatically create the Python virtual environment (`backend\venv\`) if not already present.
+   - Install required backend and frontend dependencies without reinstalling unnecessarily.
+   - Create local configuration files (`.env` and `frontend\.env`).
+   - Launch the FastAPI backend on `http://localhost:8000` in its own visible window.
+   - Launch the React/Vite frontend on `http://localhost:5173` in its own visible window.
+   - Poll `http://127.0.0.1:8000/api/health` until the backend is confirmed healthy.
+   - Automatically open `http://localhost:5173` in your default browser.
+
+### Single-Command Shutdown
+To safely stop all services without affecting any unrelated applications on your PC:
+- **Option 1**: Type `s` and press **Enter** in the `start.bat` launcher window.
+- **Option 2**: Double-click:
+  ```cmd
+  stop.bat
+  ```
+  `stop.bat` reads the tracked process IDs (`.pids.json`), cleanly terminates both backend and frontend processes, frees ports `8000` and `5173`, and cleans up all temporary process-tracking files.
+
+### Optional PowerShell Alternative
+If you prefer PowerShell, you can run:
+```powershell
+.\start.ps1
+```
+
+---
+
+## 🌐 Local Application URLs
+
+| Service | Local URL | Description |
+|---|---|---|
+| **Frontend Web Interface** | `http://localhost:5173` | React 19 + Tailwind CSS Liquid Aurora Glassmorphism UI |
+| **Backend API** | `http://localhost:8000` | Python FastAPI application server |
+| **Interactive API Documentation** | `http://localhost:8000/docs` | Swagger UI for interactive endpoint exploration |
+| **Backend Health Check** | `http://localhost:8000/api/health` | System health check (Database, FAISS, Storage) |
+
+---
+
+## 🌟 Application Modules & Features
+
+### 1. Shared PDF Document Library (`/pdf-library`)
+- Drag-and-drop PDF uploads with SHA-256 deduplication and SQLite metadata indexing.
+- Page-by-page text extraction with PyMuPDF preserving exact page coordinates.
+- **One-Click Preloaded Handbooks**: Click **"Load Sample Handbooks"** in the top header to instantly index the included fictional `Nexora_Employee_Handbook_2024.pdf` and `Nexora_Employee_Handbook_2025.pdf`.
+- Deleting a document automatically cleans up associated FAISS binary vector indexes.
+
+### 2. RAG Explorer (`/rag-explorer`)
+- Step-by-step visual inspection of the 8-stage conventional RAG pipeline:
+  `PDF Input → Text Extraction → Token Chunking → Embedding → FAISS Vector Store → Similarity Retrieval → Prompt Augmentation → Grounded LLM Generation`
+- Every stage contains educational explanations, parameters, and interactive inspection data so no stage card is ever empty.
+
+### 3. AI Agent Studio (`/agent-studio`)
+- Observable multi-step ReAct agent reasoning timeline showing `Thought → Action → Observation → Final Answer`.
+- **6 Deterministic Educational Tools**:
+  1. **Arithmetic Safe Calculator**: Evaluates arithmetic expressions, percentages, and formulas without unrestricted execution risks.
+  2. **Date & Deadline Calculator**: Calendar arithmetic, offsets, and working-day deadlines.
+  3. **Open-Meteo Live Weather Tool**: Real-time global weather forecast querying `geocoding-api.open-meteo.com` and `api.open-meteo.com` (temperature, feels like, humidity, wind, precipitation, and conditions with no API key needed).
+  4. **Mock Travel Search**: Simulated transport pricing, hotel options, and daily meal budgets.
+  5. **CSV Dataset Analyzer**: Computes column sums, averages, row counts, and min/max boundaries on tabular records.
+  6. **Text & Key Phrase Extractor**: Sentence counts, word statistics, and bulleted highlights.
+
+### 4. Agentic RAG Studio (`/agentic-rag-studio`)
+- Autonomous multi-document retrieval orchestration.
+- Decomposes multi-part queries (such as policy evolution across 2024 vs 2025 handbooks) into focused sub-queries.
+- Evaluates evidence sufficiency and performs automated query rewriting and bounded retries.
+- Constructs multi-column comparative synthesis matrices with verifiable citations.
+
+### 5. Rate Checker & Quota Telemetry (`/rate-checker`)
+- **Tab 1: Live Currency Exchange Rates**:
+  - Live currency conversion across 16+ global currencies (USD, EUR, GBP, INR, JPY, CAD, AUD, CHF, etc.).
+  - Real-time exchange rate calculation via free Open Exchange Rates API.
+  - Interactive Base and Target currency dropdowns, amount presets ($10, $50, $100, $500, $1,000), and 1-click **Swap Currencies** button.
+  - Popular Forex benchmark grid (EUR/USD, USD/INR, GBP/USD, USD/JPY, etc.).
+  - Resilient local benchmark fallback so the page is **never blank**.
+- **Tab 2: LLM Model Quotas & Resets**:
+  - Real-time countdown clocks: Rolling 60-second sliding window, Groq daily reset (00:00 UTC), and Gemini daily reset (00:00 PT).
+  - Quota telemetry cards for Gemini 2.5 Flash, Gemini 2Pro, Groq Llama 3.3 70B, Llama 3.1 8B, and Ollama.
+  - Interactive Token Budget Estimator calculating prompt token footprint and % of TPM limit consumed.
+
+### 6. Learning Centre (`/learning-centre`)
+- Illustrated guides explaining tokenization, embedding geometry, cosine distance, vector search, ReAct loops, and agentic query decomposition.
 
 ---
 
@@ -37,205 +117,109 @@ An educational, interactive web application designed to demonstrate and teach th
 
 | Layer | Technologies |
 |---|---|
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS, Lucide React, Recharts, React Router v7 |
-| **Backend** | Python 3.11+, FastAPI, Uvicorn, Pydantic v2, PyMuPDF (fitz), pypdf |
-| **Vector Engine** | **FAISS** (`faiss-cpu`, `IndexFlatIP` normalized cosine space) & **ChromaDB** with persistent disk storage |
-| **Embeddings** | `BAAI/bge-small-en-v1.5` (384 dimensions, local CPU inference, HuggingFace AutoTokenizer / Rust `tokenizers`) |
-| **LLM Providers** | Google Gemini Developer API (Flash models), Groq Cloud API, Ollama Local Models |
-| **Metadata Storage** | SQLite with Write-Ahead Logging (WAL) and Supabase Storage abstraction |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Recharts, React Router v7 |
+| **Backend** | Python 3.10+, FastAPI, Uvicorn, Pydantic v2, PyMuPDF (fitz), pypdf |
+| **Vector Engine** | **FAISS (`faiss-cpu`)** using `IndexFlatIP` (Exact Inner Product on L2-normalized 384d vectors) |
+| **Local Embeddings** | `BAAI/bge-small-en-v1.5` (384 dimensions, local CPU execution via HuggingFace `AutoTokenizer` and PyTorch) |
+| **LLM Support** | Google Gemini Developer API (Flash free-tier), Groq Cloud API, Ollama Local Models |
+| **Database** | SQLite with Write-Ahead Logging (WAL) in `backend/storage/learning_lab.db` |
+| **Process Control** | Windows Batch (`start.bat`, `stop.bat`) and PowerShell (`start.ps1`) |
 
 ---
 
-## 📁 System Architecture
+## 📁 Project Directory Structure
 
 ```text
 rag-agentic-ai-showcase/
+├── start.bat                 # One-click Windows startup script (starts both frontend & backend)
+├── stop.bat                  # One-click Windows shutdown script (stops only this project's processes)
+├── start.ps1                 # PowerShell alternative startup script
+├── .env.example              # Master environment template (local execution)
+├── sample_documents/         # Nexora Employee Handbooks (2024 & 2025)
+│   ├── Nexora_Employee_Handbook_2024.pdf
+│   └── Nexora_Employee_Handbook_2025.pdf
 ├── backend/
 │   ├── app/
 │   │   ├── core/
-│   │   │   ├── config.py         # System configuration & environment paths
-│   │   │   └── database.py       # SQLite WAL database & schema management
+│   │   │   ├── config.py         # App configuration & local paths
+│   │   │   └── database.py       # SQLite WAL database & schema initialization
 │   │   ├── routers/
-│   │   │   ├── agent.py          # AI Agent ReAct execution endpoints
+│   │   │   ├── agent.py          # AI Agent execution & individual tool sandbox
 │   │   │   ├── agentic_rag.py    # Multi-document Agentic RAG endpoints
 │   │   │   ├── chunk_lab.py      # Chunking experimentation endpoints
 │   │   │   ├── documents.py      # PDF upload, preview, and library endpoints
 │   │   │   ├── rag.py            # Conventional RAG pipeline endpoints
+│   │   │   ├── rates_router.py   # Live currency rates & conversion endpoints
 │   │   │   └── settings_router.py# LLM settings, rate limits & health telemetry
 │   │   ├── services/
-│   │   │   ├── agent_service.py      # ReAct loop orchestrator & tool executor
+│   │   │   ├── agent_service.py      # ReAct loop orchestrator & tool executors
 │   │   │   ├── agentic_rag_service.py# Multi-hop query planner & synthesizer
-│   │   │   ├── embedding_service.py  # FAISS & ChromaDB embedding pipeline
-│   │   │   ├── llm_service.py        # Provider abstraction (Gemini/Groq/Ollama)
-│   │   │   ├── pdf_service.py        # PyMuPDF parser & page renderer
-│   │   │   ├── rag_service.py        # End-to-end RAG pipeline
-│   │   │   └── storage_service.py    # Local & Supabase object storage driver
-│   │   └── main.py               # FastAPI application entrypoint
-│   ├── storage/                  # Local persistent runtime storage (gitignored)
-│   │   ├── uploads/              # Uploaded raw PDF files
-│   │   ├── faiss_index/          # Serialized .faiss binary indices & metadata
-│   │   └── chroma_db/            # ChromaDB SQLite & parquet vector tables
-│   ├── tests/                    # Automated test suites (20 tests)
-│   └── requirements.txt          # Python dependencies
+│   │   │   ├── embedding_service.py  # FAISS vector indexing & query embeddings
+│   │   │   ├── llm_service.py        # Provider abstraction (Gemini / Groq / Ollama)
+│   │   │   ├── pdf_service.py        # PyMuPDF text & page rasterizer
+│   │   │   └── rag_service.py        # End-to-end RAG pipeline
+│   │   └── main.py               # FastAPI entrypoint, lifespan, CORS & routers
+│   ├── storage/                  # Persistent local disk storage (gitignored)
+│   │   ├── uploads/              # Local uploaded PDF binary files
+│   │   └── faiss_index/          # Serialized .faiss binary index files
+│   ├── tests/                    # Automated pytest test suites
+│   └── requirements.txt          # Backend Python requirements
 ├── frontend/
 │   ├── src/
 │   │   ├── components/           # Header, Sidebar, Glass UI controls
-│   │   ├── pages/                # Dashboard, RAG Explorer, Studios, Limit Check
-│   │   ├── services/api.ts       # Unified API client with VITE_API_BASE_URL
-│   │   └── types/                # Strict TypeScript interface contracts
-│   ├── package.json              # Frontend dependencies
-│   ├── vercel.json               # SPA client-side routing rewrites
-│   └── vite.config.ts            # Vite proxy & build configuration
-├── sample_documents/             # Nexora Employee Handbooks (2024 & 2025)
-├── render.yaml                   # Render Blueprint Infrastructure-as-Code
-├── requirements.txt              # Root Python dependencies for cloud buildpacks
-├── vercel.json                   # Root Vercel deployment specification
+│   │   ├── context/              # ThemeContext (Light/Dark mode & Mobile Drawer)
+│   │   ├── pages/                # Dashboard, RAG Explorer, Studios, Rate Checker
+│   │   ├── services/api.ts       # Unified API client (configured for http://localhost:8000)
+│   │   └── types/index.ts        # TypeScript contracts
+│   ├── package.json              # Frontend npm dependencies
+│   ├── vite.config.ts            # Vite proxy & build configuration
+│   └── .env.example              # Frontend local environment template
 └── README.md
 ```
 
 ---
 
-## 🔍 FAISS Vector Database Implementation
+## 💾 Data Persistence & Local Storage
 
-The application uses **FAISS (Facebook AI Similarity Search)** via `faiss-cpu`:
-
-- **Metric**: Inner Product (`IndexFlatIP`) over L2-normalized 384-dimensional vector embeddings, mathematically equivalent to Cosine Similarity:
-  $$\text{Cosine Similarity}(\vec{u}, \vec{v}) = \frac{\vec{u} \cdot \vec{v}}{\|\vec{u}\|_2 \|\vec{v}\|_2}$$
-- **Persistence**:
-  - Binary index: `backend/storage/faiss_index/{collection_name}.faiss`
-  - Chunk metadata: `backend/storage/faiss_index/{collection_name}.json`
-- **Synchronization**: Whenever a document is indexed, both the FAISS index and the ChromaDB collection are automatically synchronized.
-- **Latency**: Sub-millisecond retrieval on local CPU hardware.
+All data persists locally across restarts:
+- **PDF Documents**: Stored under `backend/storage/uploads/`.
+- **FAISS Vector Indexes**: Binary indices saved under `backend/storage/faiss_index/`.
+- **Application Metadata**: Stored in SQLite with Write-Ahead Logging (`backend/storage/learning_lab.db`).
+- Stopping and restarting the application retains all previously uploaded documents, extracted chunks, and vector embeddings.
 
 ---
 
-## 🚀 Local Installation & Setup
+## 🧪 Running Automated Tests
 
-### Prerequisites
-
-- **Python 3.11+** (`python --version`)
-- **Node.js v18+** (`node --version`)
-- **Git** (`git --version`)
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Shoail7/rag-agentic-ai-showcase.git
-cd rag-agentic-ai-showcase
+To run the complete backend test suite locally:
+```powershell
+backend\venv\Scripts\python.exe -m pytest backend/tests/test_pipeline.py -v
 ```
 
-### 2. Backend Setup
-
-```bash
-# Create and activate virtual environment
-python -m venv venv
-
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-# source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start FastAPI backend
-uvicorn backend.app.main:app --reload --port 8000
-```
-API docs available at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
-Health diagnostic endpoint: [http://127.0.0.1:8000/api/health](http://127.0.0.1:8000/api/health)
-
-### 3. Frontend Setup
-
-Open a new terminal window:
-
-```bash
-cd frontend
-
-# Install npm dependencies
-npm install
-
-# Start Vite React development server
-npm run dev
-```
-Open your browser to: [http://localhost:5173](http://localhost:5173)
+All 10 test modules pass:
+- Arithmetic Safe Calculator AST verification
+- Date & Deadline Calculator offset computation
+- Simulated Travel Search budget matching
+- Text Analysis word & key phrase extraction
+- CSV Dataset Analyzer column statistics
+- PDF Extraction with PyMuPDF on sample handbooks
+- Token Chunking length constraints with `bge-small-en-v1.5`
+- Agentic RAG multi-document question decomposition
+- Live Currency Exchange Rate retrieval and conversion
+- Open-Meteo Weather Tool live query and parsing
 
 ---
 
-## 🧪 Automated Testing
+## 🔧 Troubleshooting
 
-The repository contains 20 comprehensive unit, pipeline, and ground-truth evaluation tests:
+### Port 8000 or 5173 is already in use
+Run `stop.bat` to automatically detect and release any processes holding ports 8000 or 5173.
 
-```bash
-# Run all pipeline and agent tool tests (8 passed)
-python -m pytest backend/tests/test_pipeline.py
+### Python command not recognized
+Ensure Python 3.10+ is installed and that the option **"Add python.exe to PATH"** was selected during installation. Test with `python --version` in a command prompt.
 
-# Run ground-truth comparative policy benchmark tests (12 passed)
-python -m pytest backend/tests/test_evaluation_dataset.py
-```
+### Node.js or npm not recognized
+Download and install the LTS version of Node.js from [nodejs.org](https://nodejs.org/). Open a new command prompt and verify with `node -v` and `npm -v`.
 
----
-
-## ☁️ Deployment Instructions
-
-### Deploying the Backend to Render
-
-1. Log in to [Render Dashboard](https://dashboard.render.com).
-2. Click **New +** → **Web Service**.
-3. Connect your GitHub repository: `Shoail7/rag-agentic-ai-showcase`.
-4. Configure the service settings:
-   - **Name**: `rag-agentic-backend`
-   - **Root Directory**: `backend` (or leave empty if using root)
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - **Health Check Path**: `/api/health`
-5. Add Environment Variables:
-   - `DEFAULT_PROVIDER`: `gemini` (or `groq`)
-   - `GEMINI_API_KEY`: *(Optional free-tier key; can also be inputted dynamically in Settings)*
-   - `STORAGE_TYPE`: `local`
-6. Click **Deploy Web Service**.
-7. Note down your Render backend URL (e.g., `https://rag-agentic-backend.onrender.com`).
-
-*(Alternatively, use the included `render.yaml` blueprint via **New +** → **Blueprint**).*
-
----
-
-### Deploying the Frontend to Vercel
-
-1. Log in to [Vercel Dashboard](https://vercel.com/new).
-2. Import the GitHub repository: `Shoail7/rag-agentic-ai-showcase`.
-3. In project settings:
-   - **Framework Preset**: `Vite`
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Add the Environment Variable:
-   - `VITE_API_BASE_URL`: `https://your-backend-name.onrender.com` (your deployed Render URL)
-5. Click **Deploy**.
-6. The app will build and deploy live with client-side SPA routing powered by `vercel.json`.
-
----
-
-## ⚠️ Free-Tier Ephemeral Storage Limitations
-
-On Render's free tier, the hosting filesystem is **ephemeral**:
-
-1. Any files uploaded to `backend/storage/uploads/` and indices stored in `backend/storage/faiss_index/` remain accessible while the service instance runs.
-2. If the service restarts or spins down due to inactivity, local storage resets to the Git commit state.
-3. **Built-in Resilience**:
-   - The application automatically re-indexes the preloaded demonstration handbooks on cold boot.
-   - For permanent enterprise storage, set `STORAGE_TYPE=supabase` in environment variables with your `SUPABASE_URL` and `SUPABASE_KEY`.
-
----
-
-## 🔒 Security Best Practices
-
-- **Zero Secrets Committed**: `.env` and runtime `.db` files are strictly excluded via `.gitignore`.
-- **Backend Masking**: API keys are stored on the server and masked in all network telemetry responses.
-- **Deterministic Sandboxing**: The AI Agent executes only whitelisted AST mathematical evaluations and structured tool functions.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+### Resetting sample data
+To reset the document library, open the **PDF Library** (`/pdf-library`), delete any unwanted documents, and click **"Load Sample Handbooks"** in the top header to cleanly re-index both 2024 and 2025 handbooks.
