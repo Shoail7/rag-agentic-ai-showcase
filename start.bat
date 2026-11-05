@@ -11,7 +11,7 @@ echo Project Root: %CD%
 echo.
 
 :: 1. Check if Docker daemon is running
-echo [1/3] Checking Docker & Docker Compose availability...
+echo [1/3] Checking Docker and Docker Compose availability...
 docker --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo   [INFO] Docker is not installed or not in PATH.
@@ -28,7 +28,7 @@ if %errorlevel% neq 0 (
 :: Docker is active -> Preferred Docker Compose launch
 echo   [OK] Docker engine and Docker Compose are active!
 echo.
-echo [2/3] Building & starting containers with Docker Compose...
+echo [2/3] Building and starting containers with Docker Compose...
 echo   (This builds the backend Python 3.11 container and frontend Vite container)
 echo.
 

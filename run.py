@@ -150,6 +150,7 @@ def main():
         [venv_python, "-m", "uvicorn", "backend.app.main:app", "--host", "127.0.0.1", "--port", "8000"],
         cwd=str(PROJECT_ROOT),
         env=backend_env,
+        stdin=subprocess.DEVNULL,
         shell=shell_flag
     )
 
@@ -158,6 +159,7 @@ def main():
     frontend_proc = subprocess.Popen(
         ["npm", "run", "dev", "--", "--host", "0.0.0.0"],
         cwd=str(FRONTEND_DIR),
+        stdin=subprocess.DEVNULL,
         shell=shell_flag
     )
 
