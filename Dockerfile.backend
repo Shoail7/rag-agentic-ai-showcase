@@ -38,3 +38,4 @@ HEALTHCHECK --interval=5s --timeout=5s --start-period=15s --retries=10 \
 
 # Start Uvicorn bound to 0.0.0.0 for container networking
 CMD ["python", "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+

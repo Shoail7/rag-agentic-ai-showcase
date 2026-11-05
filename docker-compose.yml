@@ -48,3 +48,4 @@ volumes:
   # Persistent volume for uploaded PDFs, SQLite DB, FAISS vector indexes & downloaded model weights
   ai_learning_lab_data:
     name: ai_learning_lab_persistent_data
+

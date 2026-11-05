@@ -57,3 +57,4 @@ Write-Host "`n============================================================" -For
 Write-Host "  [SUCCESS] All AI Learning Lab services have been stopped." -ForegroundColor Green
 Write-Host "  Uploaded PDFs, SQLite DB and FAISS indexes are preserved." -ForegroundColor Green
 Write-Host "============================================================`n" -ForegroundColor Cyan
+

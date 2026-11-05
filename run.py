@@ -43,9 +43,10 @@ def log(msg: str, status: str = "INFO"):
 
 def check_node():
     log("Checking Node.js & npm installation...", "INFO")
+    shell_flag = True if IS_WINDOWS else False
     try:
-        node_v = subprocess.check_output(["node", "-v"], text=True).strip()
-        npm_v = subprocess.check_output(["npm", "-v"], text=True).strip()
+        node_v = subprocess.check_output(["node", "-v"], shell=shell_flag, text=True).strip()
+        npm_v = subprocess.check_output(["npm", "-v"], shell=shell_flag, text=True).strip()
         log(f"Node {node_v} and npm {npm_v} detected.", "OK")
         return True
     except Exception:
@@ -208,3 +209,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

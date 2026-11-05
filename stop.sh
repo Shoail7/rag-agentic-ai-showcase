@@ -61,3 +61,4 @@ echo "  [SUCCESS] All AI Learning Lab services have been stopped."
 echo "  Uploaded PDFs, SQLite DB and FAISS indexes are preserved."
 echo "============================================================"
 echo ""
+
