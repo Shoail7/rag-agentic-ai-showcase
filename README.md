@@ -16,43 +16,75 @@ An educational, interactive web application running locally on your machine that
 
 ---
 
-## ⚡ Quick Start (Double-Click Local Windows Execution)
+## ⚡ Universal Cross-Platform Execution
 
-You can launch and run the entire application using a single command or double-clicking one file.
+The application can be run on **Windows, macOS, or Linux** with zero configuration using either **Docker Compose** (recommended, zero-install) or the **Native Multi-OS Runner**.
 
-### First-Time Prerequisites
-1. **Python 3.10+**: Ensure Python is installed and added to your system `PATH`.
-2. **Node.js (v18+) & npm**: Ensure Node.js LTS is installed.
+---
 
-### Normal Launch (Double-Click)
-1. In the project root directory, double-click:
-   ```cmd
-   start.bat
-   ```
-2. The script will automatically:
-   - Detect project root and verify Python, Node.js, and npm.
-   - Automatically create the Python virtual environment (`backend\venv\`) if not already present.
-   - Install required backend and frontend dependencies without reinstalling unnecessarily.
-   - Create local configuration files (`.env` and `frontend\.env`).
-   - Launch the FastAPI backend on `http://localhost:8000` in its own visible window.
-   - Launch the React/Vite frontend on `http://localhost:5173` in its own visible window.
-   - Poll `http://127.0.0.1:8000/api/health` until the backend is confirmed healthy.
-   - Automatically open `http://localhost:5173` in your default browser.
+### Option A: Docker Compose (Recommended for Windows, macOS & Linux)
 
-### Single-Command Shutdown
-To safely stop all services without affecting any unrelated applications on your PC:
-- **Option 1**: Type `s` and press **Enter** in the `start.bat` launcher window.
-- **Option 2**: Double-click:
-  ```cmd
-  stop.bat
-  ```
-  `stop.bat` reads the tracked process IDs (`.pids.json`), cleanly terminates both backend and frontend processes, frees ports `8000` and `5173`, and cleans up all temporary process-tracking files.
+The easiest and most reliable way to run the application on any operating system without installing Python, Node.js, PyTorch, or C++ build tools.
 
-### Optional PowerShell Alternative
-If you prefer PowerShell, you can run:
-```powershell
-.\start.ps1
-```
+#### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+
+#### One-Click Execution
+- **Windows (Command Prompt / Double-Click)**:
+  `cmd
+  start.bat
+  `
+  *(Detects Docker engine automatically and starts containers via Docker Compose)*
+- **Windows (PowerShell)**:
+  `powershell
+  .\start.ps1
+  `
+- **macOS / Linux (Terminal)**:
+  `ash
+  chmod +x start.sh stop.sh
+  ./start.sh
+  `
+- **Direct Docker Compose Command (Any OS)**:
+  `ash
+  docker compose up -d --build
+  `
+
+The script will build the containers, start FastAPI (:8000) and Vite (:5173), verify backend health, and automatically open http://localhost:5173 in your default browser.
+
+#### Stopping Docker Containers
+- **Windows**: stop.bat or .\stop.ps1
+- **macOS / Linux**: ./stop.sh
+- **Manual**: docker compose down
+
+*All uploaded PDFs, SQLite databases, and FAISS vector indices are safely preserved in the persistent volume (i_learning_lab_data).*
+
+---
+
+### Option B: Native Execution (Without Docker)
+
+If you prefer running directly on your host machine without Docker:
+
+#### Prerequisites
+1. **Python 3.10+**: Ensure Python is in your system PATH.
+2. **Node.js (v18+) & npm**: LTS version recommended.
+
+#### Launching Natively
+- **Universal Python Runner (Windows, macOS, Linux)**:
+  `ash
+  python run.py
+  # or python3 run.py
+  `
+  *The native runner automatically creates the virtual environment, installs dependencies, starts backend and frontend servers, and monitors health.*
+- **Windows (Double-click)**:
+  start.bat (automatically falls back to native execution if Docker Desktop is closed)
+- **macOS / Linux**:
+  ./start.sh (automatically falls back to native execution if Docker is not running)
+
+#### Stopping Native Execution
+- Press Ctrl + C in the running terminal window, or:
+- **Windows**: Run stop.bat or .\stop.ps1
+- **macOS / Linux**: Run ./stop.sh
+
 
 ---
 
@@ -129,11 +161,23 @@ If you prefer PowerShell, you can run:
 
 ## 📁 Project Directory Structure
 
-```text
+`	ext
 rag-agentic-ai-showcase/
-├── start.bat                 # One-click Windows startup script (starts both frontend & backend)
-├── stop.bat                  # One-click Windows shutdown script (stops only this project's processes)
-├── start.ps1                 # PowerShell alternative startup script
+├── docker-compose.yml        # Docker Compose configuration (FastAPI + Vite services)
+├── Dockerfile.backend        # Python 3.11-slim container definition
+├── Dockerfile.frontend       # Node.js 20-alpine container definition
+├── .dockerignore             # Docker build context exclusions
+├── start.bat                 # One-click Windows startup script (Docker first, native fallback)
+├── stop.bat                  # One-click Windows shutdown script
+├── start.ps1                 # PowerShell universal startup script
+├── stop.ps1                  # PowerShell shutdown script
+├── start.sh                  # macOS / Linux Bash startup script
+├── stop.sh                   # macOS / Linux Bash shutdown script
+├── run.py                    # Cross-platform zero-dependency native runner
+├── data/                     # Persistent data directory
+│   ├── uploads/              # Local uploaded PDF binary files
+│   ├── faiss_index/          # Serialized FAISS binary vector indices
+│   └── database/             # SQLite database (app.db)
 ├── .env.example              # Master environment template (local execution)
 ├── sample_documents/         # Nexora Employee Handbooks (2024 & 2025)
 │   ├── Nexora_Employee_Handbook_2024.pdf
@@ -141,7 +185,7 @@ rag-agentic-ai-showcase/
 ├── backend/
 │   ├── app/
 │   │   ├── core/
-│   │   │   ├── config.py         # App configuration & local paths
+│   │   │   ├── config.py         # Configurable storage & cross-platform paths
 │   │   │   └── database.py       # SQLite WAL database & schema initialization
 │   │   ├── routers/
 │   │   │   ├── agent.py          # AI Agent execution & individual tool sandbox
@@ -159,9 +203,6 @@ rag-agentic-ai-showcase/
 │   │   │   ├── pdf_service.py        # PyMuPDF text & page rasterizer
 │   │   │   └── rag_service.py        # End-to-end RAG pipeline
 │   │   └── main.py               # FastAPI entrypoint, lifespan, CORS & routers
-│   ├── storage/                  # Persistent local disk storage (gitignored)
-│   │   ├── uploads/              # Local uploaded PDF binary files
-│   │   └── faiss_index/          # Serialized .faiss binary index files
 │   ├── tests/                    # Automated pytest test suites
 │   └── requirements.txt          # Backend Python requirements
 ├── frontend/
@@ -172,10 +213,10 @@ rag-agentic-ai-showcase/
 │   │   ├── services/api.ts       # Unified API client (configured for http://localhost:8000)
 │   │   └── types/index.ts        # TypeScript contracts
 │   ├── package.json              # Frontend npm dependencies
-│   ├── vite.config.ts            # Vite proxy & build configuration
+│   ├── vite.config.ts            # Vite proxy & build configuration (0.0.0.0 binding)
 │   └── .env.example              # Frontend local environment template
 └── README.md
-```
+`
 
 ---
 

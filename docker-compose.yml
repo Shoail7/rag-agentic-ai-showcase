@@ -1,0 +1,50 @@
+# ============================================================
+# Docker Compose specification for AI Learning Lab
+# Cross-Platform Local Execution: Windows, macOS & Linux
+# ============================================================
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: ai_learning_lab_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - STORAGE_DIR=/app/data
+      - HF_HOME=/app/data/models
+      - VECTOR_DB=faiss
+      - DEBUG=true
+      - DEFAULT_PROVIDER=gemini
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    volumes:
+      - ai_learning_lab_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: ai_learning_lab_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_PROXY_URL=http://backend:8000
+      - VITE_API_BASE_URL=
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  # Persistent volume for uploaded PDFs, SQLite DB, FAISS vector indexes & downloaded model weights
+  ai_learning_lab_data:
+    name: ai_learning_lab_persistent_data

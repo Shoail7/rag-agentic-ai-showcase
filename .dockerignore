@@ -1,0 +1,30 @@
+.git
+.gitignore
+.github
+**/.git
+
+# Python artifacts & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+backend/venv/
+venv/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node artifacts
+frontend/node_modules/
+node_modules/
+frontend/dist/
+dist/
+
+# Local state & logs
+*.log
+.pids.json
+.backend.pid
+.frontend.pid
+.env
+.env.local
+frontend/.env

@@ -5,6 +5,7 @@ from typing import Generator
 from backend.app.core.config import settings
 
 def init_db():
+    settings.DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(settings.DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -170,6 +171,7 @@ def init_db():
 
 @contextmanager
 def get_db() -> Generator[sqlite3.Connection, None, None]:
+    settings.DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(settings.DATABASE_PATH, timeout=20.0)
     conn.row_factory = sqlite3.Row
     try:

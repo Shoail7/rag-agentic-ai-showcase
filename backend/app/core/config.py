@@ -3,11 +3,32 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-STORAGE_DIR = BASE_DIR / "storage"
+
+# Storage directories (configurable via STORAGE_DIR env var, defaults to root data/ or backend/storage)
+_env_storage = os.environ.get("STORAGE_DIR")
+if _env_storage:
+    STORAGE_DIR = Path(_env_storage)
+elif (BASE_DIR.parent / "data").exists():
+    STORAGE_DIR = BASE_DIR.parent / "data"
+else:
+    STORAGE_DIR = BASE_DIR / "storage"
+
 UPLOADS_DIR = STORAGE_DIR / "uploads"
 CHROMA_DIR = STORAGE_DIR / "chroma_db"
 FAISS_DIR = STORAGE_DIR / "faiss_index"
-SAMPLE_DOCS_DIR = BASE_DIR.parent / "sample_documents"
+
+# Sample documents directory (works in local dev, Docker container, and custom installs)
+_sample_candidate_1 = BASE_DIR.parent / "sample_documents"
+_sample_candidate_2 = BASE_DIR / "sample_documents"
+_sample_candidate_3 = Path("/app/sample_documents")
+if _sample_candidate_1.exists():
+    SAMPLE_DOCS_DIR = _sample_candidate_1
+elif _sample_candidate_2.exists():
+    SAMPLE_DOCS_DIR = _sample_candidate_2
+elif _sample_candidate_3.exists():
+    SAMPLE_DOCS_DIR = _sample_candidate_3
+else:
+    SAMPLE_DOCS_DIR = _sample_candidate_1
 
 # Ensure directories exist
 STORAGE_DIR.mkdir(parents=True, exist_ok=True)
