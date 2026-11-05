@@ -980,3 +980,4 @@ export const RateChecker: React.FC = () => {
     </div>
   );
 };
+

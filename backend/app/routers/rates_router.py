@@ -164,3 +164,4 @@ async def get_popular_pairs():
         "last_updated": usd_data.get("time_last_update_utc"),
         "data_source": usd_data.get("data_source")
     }
+
